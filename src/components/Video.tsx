@@ -1,8 +1,106 @@
-export function Video() {
-  return (
-    <div className="mr-auto">
-      <h1>Video</h1>
-    </div>
+import { useRef, useEffect } from "react";
+import { CaretRight, DiscordLogo, FileArrowDown, Image, Lightning } from "@phosphor-icons/react";
+import imgLogo from "../assets/devflow.png";
+import '@vime/core/themes/default.css';
+import { DefaultUi, Player, Youtube } from "@vime/react";
 
+export function Video() {
+  const playerRef = useRef<HTMLVmPlayerElement>(null);
+
+  useEffect(() => {
+    const player = playerRef.current;
+    if (player) {
+      player.extendLanguage?.('pt-BR', {
+        play: 'Reproduzir',
+        Pause: 'Pausar',
+        mute: 'Silenciar',
+        unmute: 'Ativar som',
+        enterFullscreen: 'Tela cheia',
+        exitFullscreen: 'Sair da tela cheia',
+        settings: 'configuração'
+
+
+      });
+    }
+  }, []);
+
+  return (
+    <div className="w-[calc(100%-348px)] h-full ">
+      <div className="bg-black flex justify-center">
+        <div className="w-full h-full max-h-[60vh] max-w-[1100px] aspect-video">
+          <Player ref={playerRef} language="pt-BR" isSettingsActive={true}>
+            <Youtube videoId="Lgobx1hqkrA" lang="pt-BR" />
+            <DefaultUi lang="pt-BR" />
+          </Player>
+        </div>
+      </div>
+
+      <div className="w-full p-8 mx-auto mt-30">
+        <div className="flex items-start gap-16">
+          <div className="flex-1 ">
+            <h1 className="text-2xl font-bold">
+              Aula 01 - Criando o projeto e realizando o setup inicial
+            </h1>
+            <p className="mt-4 text-gray-200 leading-relaxed ">
+              Nessa aula vamos dar início ao projeto criando a estrutura base da aplicação utilizando ReactJS, Vite e TailwindCSS. Vamos também realizar o setup do nosso projeto no GraphCMS criando as entidades da aplicação e integrando a API GraphQL gerada pela plataforma no nosso front-end utilizando Apollo Client.
+            </p>
+          </div>
+          <div className="flex flex-col gap-4">
+            <a href="#" className="gap-1 p-4 bg-green-500 flex items-center text-sm rounded font-bold uppercase hover:bg-green-700 transition-colors ">
+              <DiscordLogo size={24} />
+              Comunidade no discord
+            </a>
+            <a href="#" className="flex items-center p-4 text-lg font-bold rounded border border-blue-500 text-blue-500 gap-1 transition-colors hover:bg-blue-500 hover:text-gray-900">
+              <Lightning size={24} />
+              Acesse o desafio
+            </a>
+          </div>
+        </div>
+
+        <div className="flex gap-4 mt-6 items-center">
+          <img
+            className="h-16 w-16 rounded-full border-4 border-blue-500"
+            src="https://github.com/martinsromao.png"
+            alt=""
+          />
+          <div className="leading-relaxed">
+            <strong className="font-bold text-2xl block">Ronivelton Martins</strong>
+            <span className="block text-sm text-gray-200">CTO @Devflow</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-between gap-8 mx-2 mt-20 mb-20">
+        <a href="#" className="flex w-[502px] h-[134px] rounded items-center gap-3 bg-gray-700 hover:bg-gray-400 transition-colors">
+          <div className="w-[89px] h-full rounded bg-green-700 flex items-center justify-center mr-1.5 ">
+            <FileArrowDown size={39} />
+          </div>
+          <div className="w-[252px]">
+            <strong className="font-bold text-2xl">Material complementar</strong>
+            <p className="mt-2 text-sm text-gray-200">Acesse o material complementar para acelerar o seu desenvolvimento</p>
+          </div>
+          <CaretRight size={24} />
+        </a>
+
+        <a href="#" className="flex w-[502px] h-[134px] items-center gap-3 rounded bg-gray-700 hover:bg-gray-400 transition-colors">
+          <div className="w-[89px] h-full bg-green-700 flex items-center rounded justify-center mr-1.5">
+            <Image size={39} />
+          </div>
+          <div className="w-[252px]">
+            <strong className="font-bold text-2xl">Wallpapers exclusivos</strong>
+            <p className="mt-2 text-sm text-gray-200">Baixe wallpapers exclusivos do Ignite Lab e personalize a sua máquina</p>
+          </div>
+          <CaretRight size={24} />
+        </a>
+      </div>
+
+      <footer className="flex items-center justify-between px-6 pt-6 border-t border-gray-500">
+        <nav className="flex items-center">
+          <img src={imgLogo} alt="imagem da logo" className="w-[162px]" />
+          <span className="text-lg text-gray-300">DevFlow - Todos os direitos reservados</span>
+        </nav>
+        <a href="#" className="mr-8 text-lg text-gray-300">Políticas de privacidade</a>
+      </footer>
+    </div>
   );
 }

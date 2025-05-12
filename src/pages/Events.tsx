@@ -9,7 +9,7 @@ export function Events() {
     <div className="flex flex-col min-h-screen">
 
       <Header />
-      <main className="flex w-full min-h-screen">
+      <main className="flex w-full min-h-screen justify-between">
         <Video />
         <Sidebar />
       </main>
