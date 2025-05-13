@@ -3,8 +3,53 @@ import { CaretRight, DiscordLogo, FileArrowDown, Image, Lightning } from "@phosp
 import imgLogo from "../assets/devflow.png";
 import '@vime/core/themes/default.css';
 import { DefaultUi, Player, Youtube } from "@vime/react";
+import { gql, useQuery } from "@apollo/client";
 
-export function Video() {
+const GET_LESSON_BY_SLUG_QUERY = gql`
+query GetLessonBySlug ($slug: String = "slug"){
+  lesson(where: {slug: $slug}) {
+    title
+    videoId
+    description
+   teacher {
+    avatarURL
+    bio
+    name
+  }
+  }
+ 
+}
+`;
+interface GetLessonBySlugResponse {
+  lesson: {
+    title: string,
+    videoId: string,
+    description: string,
+    teacher: {
+      avatarURL: string,
+      name: string,
+      bio: string
+    }
+  }
+}
+
+
+
+
+
+interface videoProps {
+  lessonSlug: string
+}
+export function Video(props: videoProps) {
+  const { data } = useQuery<GetLessonBySlugResponse>(GET_LESSON_BY_SLUG_QUERY, {
+    variables: {
+      slug: props.lessonSlug
+    }
+  })
+
+
+
+
   const playerRef = useRef<HTMLVmPlayerElement>(null);
 
   useEffect(() => {
@@ -23,6 +68,12 @@ export function Video() {
       });
     }
   }, []);
+  if (!data) {
+    return (
+      <div className="flex-1"></div>
+    );
+  }
+
 
   return (
     <div className="w-[calc(100%-348px)] h-full ">
@@ -39,10 +90,10 @@ export function Video() {
         <div className="flex items-start gap-16">
           <div className="flex-1 ">
             <h1 className="text-2xl font-bold">
-              Aula 01 - Criando o projeto e realizando o setup inicial
+              {data.lesson.title}
             </h1>
             <p className="mt-4 text-gray-200 leading-relaxed ">
-              Nessa aula vamos dar início ao projeto criando a estrutura base da aplicação utilizando ReactJS, Vite e TailwindCSS. Vamos também realizar o setup do nosso projeto no GraphCMS criando as entidades da aplicação e integrando a API GraphQL gerada pela plataforma no nosso front-end utilizando Apollo Client.
+              {data.lesson.description}
             </p>
           </div>
           <div className="flex flex-col gap-4">
@@ -60,12 +111,12 @@ export function Video() {
         <div className="flex gap-4 mt-6 items-center">
           <img
             className="h-16 w-16 rounded-full border-4 border-blue-500"
-            src="https://github.com/martinsromao.png"
+            src={data.lesson.teacher.avatarURL}
             alt=""
           />
           <div className="leading-relaxed">
-            <strong className="font-bold text-2xl block">Ronivelton Martins</strong>
-            <span className="block text-sm text-gray-200">CTO @Devflow</span>
+            <strong className="font-bold text-2xl block">{data.lesson.teacher.name}</strong>
+            <span className="block text-sm text-gray-200">{data.lesson.teacher.bio}</span>
           </div>
         </div>
       </div>
