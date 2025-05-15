@@ -1,7 +1,36 @@
+import { useState, type FormEvent } from "react";
 import { Footer } from "../components/footer";
 import { Logo } from "../components/Logo"
+import { gql, useMutation } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
+
+const CREATE_SUBCRIBER_MUTATION = gql`
+mutation CreateSubcribe($name: String!, $email: String!) {
+  createSubscriber(data: {name: $name, email: $email}) {
+    id
+  }
+}
+`
 
 export function Subscribe() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+
+  const [createSubcribe, { loading }] = useMutation(CREATE_SUBCRIBER_MUTATION);
+  const navigate = useNavigate()
+
+  async function handleSubcribe(event: FormEvent) {
+    event.preventDefault();
+    await createSubcribe({
+      variables: {
+        name,
+        email
+      }
+    })
+
+    navigate('/event')
+
+  }
   return (
     <div className="flex flex-col min-h-screen bg-[url(src/assets/blur.png)] bg-cover bg-no-repeat ">
       <div className="flex gap-24 w-full ml-[50px] mr-[50px] items-center mt-[121px] ">
@@ -17,17 +46,22 @@ export function Subscribe() {
         <div className="w-[391px] border-2 border-gray-500 rounded p-8 relative">
           <strong className="text-2xl mb-6 block font-bold">Inscreva-se gratuitamente</strong>
           <form className="flex flex-col gap-2
-           w-full " >
+           w-full " onSubmit={handleSubcribe}>
             <input
+              required
+              onChange={event => setName(event.target.value)}
               className="bg-gray-900 p-4"
               type="text" placeholder="Seu nome completo"
             />
             <input
+              required
+              onChange={event => setEmail(event.target.value)}
               className="bg-gray-900 p-4"
               type="text" placeholder="Digite seu email" />
 
             <button type="submit"
-              className="p-4  bg-green-500 rounded mt-6 uppercase leading-8 text-sm cursor-pointer "
+              disabled={loading}
+              className="p-4  bg-green-500 rounded mt-6 uppercase leading-8 text-sm cursor-pointer disabled:opacity-50"
             >
               garantir minha vaga
             </button>
