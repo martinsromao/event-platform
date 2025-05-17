@@ -1,22 +1,16 @@
 import { useState, type FormEvent } from "react";
-import { Footer } from "../components/footer";
+import { Footer } from "../components/Footer";
 import { Logo } from "../components/Logo"
-import { gql, useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
+import { useCreateSubcribeMutation } from "../graphql/generated";
 
-const CREATE_SUBCRIBER_MUTATION = gql`
-mutation CreateSubcribe($name: String!, $email: String!) {
-  createSubscriber(data: {name: $name, email: $email}) {
-    id
-  }
-}
-`
+
 
 export function Subscribe() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
-  const [createSubcribe, { loading }] = useMutation(CREATE_SUBCRIBER_MUTATION);
+  const [createSubcribe, { loading }] = useCreateSubcribeMutation();
   const navigate = useNavigate()
 
   async function handleSubcribe(event: FormEvent) {

@@ -1,31 +1,10 @@
-import { gql, useQuery } from "@apollo/client";
+import { useGetLessonsQuery } from "../graphql/generated";
 import { Lesson } from "./Lesson";
-const GET_LASSON_QUERY = gql`
-  query{
-  lessons(orderBy: availableAt_ASC, stage: PUBLISHED) {
-    availableAt
-    id
-    lessonType
-    slug
-    title
-  }
-}
-`
-interface GetLessonsQueryResponse {
-  lessons: {
-    id: string,
-    title: string,
-    slug: string,
-    availableAt: string,
-    lessonType: 'live' | 'class',
-  }[]
-}
+
 export function Sidebar() {
-  const { data } = useQuery<GetLessonsQueryResponse>(GET_LASSON_QUERY)
+  const { data } = useGetLessonsQuery()
   return (
-
-
-    <aside className="w-[348px] border-l bg-gray-700 p-6 border-gray-600 mb-8">
+    <aside className="w-[348px] border-l bg-gray-700 p-6 border-gray-600 h-screen overflow-y-auto scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-500">
       <span className="font-bold border-b border-gray-600 text-2xl pb-6 mb-6 block">
         Cronograma das aulas
       </span>
@@ -39,12 +18,9 @@ export function Sidebar() {
               slug={lesson.slug}
               availableAt={new Date(lesson.availableAt)}
               type={lesson.lessonType} />
-
           )
         })}
-
       </div>
-
     </aside>
   );
 }

@@ -2,51 +2,19 @@ import { useRef, useEffect } from "react";
 import { CaretRight, DiscordLogo, FileArrowDown, Image, Lightning } from "@phosphor-icons/react";
 import '@vime/core/themes/default.css';
 import { DefaultUi, Player, Youtube } from "@vime/react";
-import { gql, useQuery } from "@apollo/client";
-import { Footer } from "./footer";
-
-const GET_LESSON_BY_SLUG_QUERY = gql`
-query GetLessonBySlug ($slug: String = "slug"){
-  lesson(where: {slug: $slug}) {
-    title
-    videoId
-    description
-   teacher {
-    avatarURL
-    bio
-    name
-  }
-  }
- 
-}
-`;
-interface GetLessonBySlugResponse {
-  lesson: {
-    title: string,
-    videoId: string,
-    description: string,
-    teacher: {
-      avatarURL: string,
-      name: string,
-      bio: string
-    }
-  }
-}
-
-
-
-
+import { Footer } from "./Footer";
+import { useGetLessonBySlugQuery } from "../graphql/generated";
 
 interface videoProps {
   lessonSlug: string
 }
 export function Video(props: videoProps) {
-  const { data } = useQuery<GetLessonBySlugResponse>(GET_LESSON_BY_SLUG_QUERY, {
+  const { data } = useGetLessonBySlugQuery({
     variables: {
       slug: props.lessonSlug
     }
   })
-
+  console.log(data)
 
 
 
@@ -68,7 +36,7 @@ export function Video(props: videoProps) {
       });
     }
   }, []);
-  if (!data) {
+  if (!data || !data.lesson) {
     return (
       <div className="flex-1"></div>
     );
@@ -80,7 +48,7 @@ export function Video(props: videoProps) {
       <div className="bg-black flex justify-center">
         <div className="w-full h-full max-h-[60vh] max-w-[1100px] aspect-video">
           <Player ref={playerRef} language="pt-BR" isSettingsActive={true}>
-            <Youtube videoId="Lgobx1hqkrA" lang="pt-BR" />
+            <Youtube videoId={data.lesson.videoId} lang="pt-BR" />
             <DefaultUi lang="pt-BR" />
           </Player>
         </div>
@@ -108,17 +76,18 @@ export function Video(props: videoProps) {
           </div>
         </div>
 
-        <div className="flex gap-4 mt-6 items-center">
-          <img
-            className="h-16 w-16 rounded-full border-4 border-blue-500"
-            src={data.lesson.teacher.avatarURL}
-            alt=""
-          />
-          <div className="leading-relaxed">
-            <strong className="font-bold text-2xl block">{data.lesson.teacher.name}</strong>
-            <span className="block text-sm text-gray-200">{data.lesson.teacher.bio}</span>
-          </div>
-        </div>
+        {data.lesson.teacher && (
+          <div className="flex gap-4 mt-6 items-center">
+            <img
+              className="h-16 w-16 rounded-full border-4 border-blue-500"
+              src={data.lesson.teacher.avatarURL}
+              alt=""
+            />
+            <div className="leading-relaxed">
+              <strong className="font-bold text-2xl block">{data.lesson.teacher.name}</strong>
+              <span className="block text-sm text-gray-200">{data.lesson.teacher.bio}</span>
+            </div>
+          </div>)}
       </div>
 
       <div className="flex justify-between gap-8 mx-2 mt-20 mb-20">
